@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图形寓意互动</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", sans-serif;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 40px;
+            background: #f5f7fa;
+        }
+        #canvas {
+            border: 1px solid #ccc;
+            background: #fff;
+        }
+        .box {
+            margin-top: 20px;
+            text-align: center;
+        }
+        input {
+            padding: 8px 12px;
+            width: 220px;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        button {
+            padding: 8px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #409eff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+        }
+        .tip {
+            font-size: 18px;
+            margin: 10px 0;
+            color: #333;
+        }
+        .final-text {
+            font-size: 20px;
+            color: #e64340;
+            font-weight: bold;
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="600" height="400"></canvas>
+
+    <div class="box">
+        <div class="tip" id="question">这是什么？</div>
+        <input type="text" id="inputVal" placeholder="请输入答案">
+        <br>
+        <button id="submitBtn">提交</button>
+        <div class="tip" id="hint"></div>
+        <div class="final-text" id="successText">你的聪明惊讶到了请凭截图找我</div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const question = document.getElementById('question');
+        const inputVal = document.getElementById('inputVal');
+        const submitBtn = document.getElementById('submitBtn');
+        const hint = document.getElementById('hint');
+        const successText = document.getElementById('successText');
+
+        const cx = 300;
+        const cy = 180;
+        const len = 120;
+        let step = 0;
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // 初始水平线段
+        function drawLine() {
+            clearCanvas();
+            ctx.beginPath();
+            ctx.moveTo(cx - len, cy);
+            ctx.lineTo(cx + len, cy);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#333';
+            ctx.stroke();
+        }
+
+        // 等边三角形=勇气 过程带字
+        function drawEquiTri() {
+            clearCanvas();
+            ctx.beginPath();
+            ctx.moveTo(cx - len, cy + len/2);
+            ctx.lineTo(cx + len, cy + len/2);
+            ctx.lineTo(cx, cy - len/2);
+            ctx.closePath();
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.font = '20px 微软雅黑';
+            ctx.fillStyle = '#666';
+            ctx.fillText('等边三角形=勇气', cx + len + 20, cy);
+        }
+
+        // 直角三角形=平衡 过程带字
+        function drawRightTri() {
+            clearCanvas();
+            ctx.beginPath();
+            ctx.moveTo(cx - len, cy - len/2);
+            ctx.lineTo(cx - len, cy + len/2);
+            ctx.lineTo(cx + len, cy + len/2);
+            ctx.closePath();
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.font = '20px 微软雅黑';
+            ctx.fillStyle = '#666';
+            ctx.fillText('直角三角形=平衡', cx + len + 20, cy);
+        }
+
+        // 等腰三角形=的 过程带字
+        function drawIsoTri() {
+            clearCanvas();
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - len/2);
+            ctx.lineTo(cx - len, cy + len/2);
+            ctx.lineTo(cx + len, cy + len/2);
+            ctx.closePath();
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.font = '20px 微软雅黑';
+            ctx.fillStyle = '#666';
+            ctx.fillText('等腰三角形=的', cx + len + 20, cy);
+        }
+
+        // 平行四边形=标准 过程带字
+        function drawParallelogram() {
+            clearCanvas();
+            ctx.beginPath();
+            ctx.moveTo(cx - len, cy - len/3);
+            ctx.lineTo(cx + len/2, cy - len/3);
+            ctx.lineTo(cx + len, cy + len/3);
+            ctx.lineTo(cx - len/2, cy + len/3);
+            ctx.closePath();
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.font = '20px 微软雅黑';
+            ctx.fillStyle = '#666';
+            ctx.fillText('平行四边形=标准', cx + len + 20, cy);
+        }
+
+        // 最后全部图形摆一起：**不带任何含义文字**
+        function drawAllShape() {
+            clearCanvas();
+            let y1 = 100;
+            let y2 = 220;
+
+            // 等边三角
+            ctx.beginPath();
+            ctx.moveTo(80, y1 + 30);
+            ctx.lineTo(200, y1 + 30);
+            ctx.lineTo(140, y1 - 30);
+            ctx.closePath();
+            ctx.stroke();
+
+            // 直角三角
+            ctx.beginPath();
+            ctx.moveTo(260, y1 - 30);
+            ctx.lineTo(260, y1 + 30);
+            ctx.lineTo(380, y1 + 30);
+            ctx.closePath();
+            ctx.stroke();
+
+            // 等腰三角
+            ctx.beginPath();
+            ctx.moveTo(80, y2 - 30);
+            ctx.lineTo(200, y2 + 30);
+            ctx.lineTo(140, y2 + 30);
+            ctx.closePath();
+            ctx.stroke();
+
+            // 平行四边形
+            ctx.beginPath();
+            ctx.moveTo(260, y2 - 20);
+            ctx.lineTo(350, y2 - 20);
+            ctx.lineTo(380, y2 + 20);
+            ctx.lineTo(290, y2 + 20);
+            ctx.closePath();
+            ctx.stroke();
+        }
+
+        drawLine();
+
+        // 第一次答题
+        submitBtn.onclick = function() {
+            let val = inputVal.value.trim();
+            if(val === '线' || val === '线段') {
+                hint.innerText = '回答正确！开始演变';
+                inputVal.disabled = true;
+                submitBtn.disabled = true;
+                setTimeout(()=>{
+                    drawEquiTri();
+                    setTimeout(()=>{
+                        drawRightTri();
+                        setTimeout(()=>{
+                            drawIsoTri();
+                            setTimeout(()=>{
+                                drawParallelogram();
+                                setTimeout(()=>{
+                                    // 最后汇总 只画图 不写字
+                                    drawAllShape();
+                                    question.innerText = '请用已知它们的含义来造一句话';
+                                    inputVal.value = '';
+                                    inputVal.disabled = false;
+                                    submitBtn.disabled = false;
+                                    hint.innerText = '';
+                                    step = 1;
+                                }, 2000);
+                            }, 2000);
+                        }, 2000);
+                    }, 2000);
+                }, 500);
+            } else {
+                hint.innerText = '答案不对，再试试';
+            }
+        }
+
+        // 第二次答题
+        submitBtn.addEventListener('click', function() {
+            if(step === 1) {
+                let val = inputVal.value.trim();
+                if(val === '平衡勇气的标准') {
+                    hint.innerText = '回答正确！';
+                    successText.style.display = 'block';
+                } else {
+                    hint.innerText = '不对哦，再想一想';
+                }
+            }
+        })
+    </script>
+</body>
+</html>
